@@ -163,20 +163,17 @@ class RosbridgeWebSocket(WebSocketHandler):
             message = bytes(message)
         else:
             binary = False
-        
-        # Add the msg full size to the footer #
-        get_msg_size = len(message) #Get the current msg size
-        msg_full_string = " 'msg_full_size': '0xFFFFFFFF' " #Count the number of characters
-        send_msg_size = get_msg_size + len(msg_full_string) #The number of characters to add
-        
-        new_json_message = OrderedDict() #Ordered dictionary
-        new_json_message['msg_full_size'] = format(send_msg_size, '#010x') #write to json 32bit
-        json_message = json.loads(message)
-        new_json_message.update(json_message)
-        
-        message = json.dumps(new_json_message)
-#        print (message)
-#        print (len(message))
+            # Add the msg full size to the footer #
+            get_msg_size = len(message) #Get the current msg size
+            msg_full_string = " 'msg_full_size': '0xFFFFFFFF' " #Count the number of characters
+            send_msg_size = get_msg_size + len(msg_full_string) #The number of characters to add
+            new_json_message = OrderedDict() #Ordered dictionary
+            new_json_message['msg_full_size'] = format(send_msg_size, '#010x') #write to json 32bit
+            json_message = json.loads(message)
+            new_json_message.update(json_message)
+            message = json.dumps(new_json_message)
+#            print (message)
+#            print (len(message))
         
         with self._write_lock:
             IOLoop.instance().add_callback(partial(self.prewrite_message, message, binary))
